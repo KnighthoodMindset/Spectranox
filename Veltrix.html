@@ -1,0 +1,98 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Spectranox — Veltrix Cipher</title>
+  <link rel="stylesheet" href="techniques.css">
+</head>
+<body>
+  <div class="app">
+    <!-- Sidebar -->
+    <aside class="brand">
+      <div class="logo-wrap">
+        <div class="logo">
+          <span class="sn">SN</span>
+        </div>
+      </div>
+      <h2 class="title">Spectranox</h2>
+      <p class="subtitle">Where every secret has a spectrum</p>
+      <nav>
+        <a href="zypherion.html" class="nav-item">⚡ Zypherion</a>
+        <a href="veltrix.html" class="nav-item active">✨ Veltrix</a>
+        <a href="orvion.html" class="nav-item">🔮 Orvion</a>
+        <a href="klyptar.html" class="nav-item">🔁 Klyptar</a>
+        <a href="xernova.html" class="nav-item">🔐 Xernova</a>
+        <a href="tavalon.html" class="nav-item">🔷 Tavalon</a>
+        <a href="cryvex.html" class="nav-item">🔥 Cryvex</a>
+      </nav>
+      <div class="pattern"></div>
+      <div style="position:absolute;left:22px;bottom:22px;font-size:12px;color:rgba(230,240,255,0.6)">
+        Spectranox © <span id="year"></span>
+      </div>
+    </aside>
+
+    <!-- Main Content -->
+    <main class="main">
+      <div class="hero">
+        <div class="left">
+          <h1>Veltrix Cipher</h1>
+          <p class="lead">
+            Odd shift → forward, Even shift → backward.  
+            Choose a shift value (1–25) and encrypt or decrypt automatically.
+          </p>
+        </div>
+      </div>
+
+      <div class="form-group">
+        <label for="plaintext">Plaintext</label>
+        <textarea id="plaintext" rows="3" placeholder="Type your message...">HELLO</textarea>
+      </div>
+
+      <div class="form-group">
+        <label for="shift">Shift (1–25)</label>
+        <input id="shift" type="number" min="1" max="25" value="3">
+      </div>
+
+      <div class="buttons">
+        <button onclick="processText(true)">Encrypt</button>
+        <button onclick="processText(false)">Decrypt</button>
+      </div>
+
+      <div class="form-group">
+        <label>Result</label>
+        <textarea id="result" rows="3" readonly></textarea>
+      </div>
+    </main>
+  </div>
+
+  <script>
+    document.getElementById('year').textContent = new Date().getFullYear();
+
+    function veltrixTransform(text, shift, isEncrypt) {
+      let result = "";
+      let actualShift = (shift % 2 === 0) ? -shift : shift; // even backward, odd forward
+      for (let ch of text) {
+        if (/[a-zA-Z]/.test(ch)) {
+          let base = ch === ch.toUpperCase() ? 'A' : 'a';
+          let originalPos = ch.charCodeAt(0) - base.charCodeAt(0);
+          let newPos = isEncrypt
+            ? (originalPos + actualShift + 26) % 26
+            : (originalPos - actualShift + 26) % 26;
+          result += String.fromCharCode(base.charCodeAt(0) + newPos);
+        } else {
+          result += ch;
+        }
+      }
+      return result;
+    }
+
+    function processText(isEncrypt) {
+      const txt = document.getElementById('plaintext').value || '';
+      const shift = parseInt(document.getElementById('shift').value) || 1;
+      const res = veltrixTransform(txt, shift, isEncrypt);
+      document.getElementById('result').value = res;
+    }
+  </script>
+</body>
+</html>
