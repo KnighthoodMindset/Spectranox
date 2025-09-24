@@ -1,0 +1,119 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Spectranox — Cryvex Cipher</title>
+  <link rel="stylesheet" href="techniques.css">
+</head>
+<body>
+  <div class="app">
+    <aside class="brand">
+      <div class="logo-wrap">
+        <div class="logo"><span class="sn">SN</span></div>
+      </div>
+      <h2 class="title">Spectranox</h2>
+      <p class="subtitle">Where every secret has a spectrum</p>
+      <nav>
+        <a href="zypherion.html" class="nav-item">⚡ Zypherion</a>
+        <a href="veltrix.html" class="nav-item">✨ Veltrix</a>
+        <a href="orvion.html" class="nav-item">🔮 Orvion</a>
+        <a href="klyptar.html" class="nav-item">🔁 Klyptar</a>
+        <a href="xernova.html" class="nav-item">🔐 Xernova</a>
+        <a href="tavalon.html" class="nav-item">🔷 Tavalon</a>
+        <a href="cryvex.html" class="nav-item active">🔥 Cryvex</a>
+      </nav>
+      <div class="pattern"></div>
+      <div style="position:absolute;left:22px;bottom:22px;font-size:12px;color:rgba(230,240,255,0.6)">
+        Spectranox © <span id="year"></span>
+      </div>
+    </aside>
+
+    <main class="main">
+      <div class="hero">
+        <div class="left">
+          <h1>Cryvex Cipher</h1>
+          <p class="lead">
+            Converts letters → ASCII → digits → symbols.  
+            Includes reversible encoding using delimiters.
+          </p>
+        </div>
+      </div>
+
+      <div class="form-group">
+        <label for="plaintext">Plaintext</label>
+        <textarea id="plaintext" rows="3" placeholder="Type your message...">sweety</textarea>
+      </div>
+
+      <div class="buttons">
+        <button onclick="encryptCryvex()">Encrypt</button>
+        <button onclick="decryptCryvex()">Decrypt</button>
+      </div>
+
+      <div class="form-group">
+        <label>Result</label>
+        <textarea id="result" rows="3" readonly></textarea>
+      </div>
+    </main>
+  </div>
+
+  <script>
+    document.getElementById('year').textContent = new Date().getFullYear();
+
+    const symbolMap = {
+      A: "!", B: "@", C: "#", D: "$", E: "%", F: "^", G: "&", H: "*", I: "(", 
+      J: ")", K: "~", L: "`", M: "\\", N: "+", O: "[", P: "]", Q: "{", R: "}", 
+      S: ":", T: ";", U: '"', V: "'", W: "<", X: ">", Y: "?", Z: "/"
+    };
+
+    const reverseSymbolMap = Object.fromEntries(
+      Object.entries(symbolMap).map(([k,v]) => [v,k])
+    );
+
+    function encryptCryvex() {
+      const text = document.getElementById('plaintext').value.toUpperCase();
+      let result = "";
+
+      for (let ch of text) {
+        if (ch >= 'A' && ch <= 'Z') {
+          let ascii = ch.charCodeAt(0).toString();
+          for (let digit of ascii) {
+            let index = parseInt(digit);
+            if (index === 0) index = 26;
+            let letter = String.fromCharCode(64 + index);
+            result += symbolMap[letter] || letter;
+          }
+          result += "|"; // delimiter
+        } else {
+          result += ch;
+        }
+      }
+
+      document.getElementById('result').value = result;
+    }
+
+    function decryptCryvex() {
+      const text = document.getElementById('plaintext').value;
+      let result = "";
+
+      const parts = text.split("|").filter(Boolean);
+
+      for (let part of parts) {
+        let digits = "";
+        for (let sym of part) {
+          let letter = reverseSymbolMap[sym];
+          if (!letter) continue;
+          let index = letter.charCodeAt(0) - 64;
+          digits += (index === 26) ? "0" : index.toString();
+        }
+        if (digits) {
+          let asciiCode = parseInt(digits);
+          result += String.fromCharCode(asciiCode);
+        }
+      }
+
+      document.getElementById('result').value = result;
+    }
+  </script>
+</body>
+</html>
