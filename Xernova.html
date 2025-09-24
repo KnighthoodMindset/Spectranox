@@ -1,0 +1,87 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Xernova Cipher</title>
+  <link rel="stylesheet" href="techniques.css">
+</head>
+<body>
+  <div class="app">
+    <!-- Sidebar -->
+    <aside class="brand">
+      <div class="logo-wrap">
+        <div class="logo">
+          <span class="sn">SN</span>
+        </div>
+      </div>
+      <h2 class="title">Xernova</h2>
+      <p class="subtitle">Symbol Mapping Cipher</p>
+      <nav>
+        <a href="zypherion.html" class="nav-item">Zypherion</a>
+        <a href="veltrix.html" class="nav-item">Veltrix</a>
+        <a href="orvion.html" class="nav-item">Orvion</a>
+        <a href="klyptar.html" class="nav-item">Klyptar</a>
+        <a href="xernova.html" class="nav-item active">Xernova</a>
+        <a href="tavalon.html" class="nav-item">Tavalon</a>
+        <a href="cryvex.html" class="nav-item">Cryvex</a>
+      </nav>
+      <div class="pattern"></div>
+    </aside>
+
+    <!-- Main Content -->
+    <main class="main">
+      <div class="hero">
+        <div class="left">
+          <h1>Xernova Cipher</h1>
+          <p class="lead">Encrypt and decrypt messages using the predefined symbol mappings.</p>
+        </div>
+      </div>
+
+      <div class="form-group">
+        <textarea id="inputText" rows="3" placeholder="Enter your text..."></textarea>
+      </div>
+
+      <div class="buttons">
+        <button onclick="encrypt()">Encrypt</button>
+        <button onclick="decrypt()">Decrypt</button>
+      </div>
+
+      <div class="form-group">
+        <textarea id="outputText" rows="3" placeholder="Result will appear here..." readonly></textarea>
+      </div>
+    </main>
+  </div>
+
+  <script>
+    // Symbol mapping for Xernova
+    const symbolMap = {
+      A: "!", B: "@", C: "#", D: "$", E: "%",
+      F: "^", G: "&", H: "*", I: "(", J: ")",
+      K: "~", L: "`", M: "\\", N: "+", O: "[",
+      P: "]", Q: "{", R: "}", S: ":", T: ";",
+      U: '"', V: "'", W: "<", X: ">", Y: "?",
+      Z: "/"
+    };
+
+    // Reverse map
+    const reverseMap = Object.fromEntries(
+      Object.entries(symbolMap).map(([k, v]) => [v, k])
+    );
+
+    function encrypt() {
+      const text = document.getElementById("inputText").value.toUpperCase();
+      let result = "";
+      for (let c of text) result += symbolMap[c] || c;
+      document.getElementById("outputText").value = result;
+    }
+
+    function decrypt() {
+      const text = document.getElementById("inputText").value;
+      let result = "";
+      for (let c of text) result += reverseMap[c] || c;
+      document.getElementById("outputText").value = result;
+    }
+  </script>
+</body>
+</html>
