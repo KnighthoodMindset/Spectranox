@@ -1,0 +1,119 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Spectranox — Zypherion Cipher</title>
+  <link rel="stylesheet" href="C:\Users\SWEETY\OneDrive\Desktop\techniques.css">
+</head>
+<body>
+  <div class="app">
+    <!-- Sidebar -->
+    <aside class="brand">
+      <div class="logo-wrap">
+        <div class="logo">
+          <span class="sn">SN</span>
+        </div>
+      </div>
+      <h2 class="title">Spectranox</h2>
+      <p class="subtitle">Where every secret has a spectrum</p>
+      <nav>
+        <a href="Zypherion.html" class="nav-item active">⚡ Zypherion</a>
+        <a href="Veltrix.html" class="nav-item">✨ Veltrix</a>
+        <a href="Orvion.html" class="nav-item">🔮 Orvion</a>
+        <a href="Klyptar.html" class="nav-item">🔁 Klyptar</a>
+        <a href="Xernova.html" class="nav-item">🔐 Xernova</a>
+        <a href="Tavalon.html" class="nav-item">🔷 Tavalon</a>
+        <a href="Cryvex.html" class="nav-item">🔥 Cryvex</a>
+      </nav>
+      <div class="pattern"></div>
+      <div style="position:absolute;left:22px;bottom:22px;font-size:12px;color:rgba(230,240,255,0.6)">
+        Spectranox © <span id="year"></span>
+      </div>
+    </aside>
+
+    <!-- Main Content -->
+    <main class="main">
+      <div class="hero">
+        <div class="left">
+          <h1>Zypherion Cipher</h1>
+          <p class="lead">
+            Position-based shifting cipher — each letter shifted by its position (1,2,3...).  
+            Encrypt or decrypt text using Zypherion logic.
+          </p>
+        </div>
+      </div>
+
+      <div class="form-group">
+        <label for="plaintext">Plaintext</label>
+        <textarea id="plaintext" rows="3" placeholder="Type your message...">SWEETY</textarea>
+      </div>
+
+      <div class="form-group">
+        <label>Options</label>
+        <select id="caseOpt">
+          <option value="upper">Uppercase (A–Z)</option>
+          <option value="preserve">Preserve case</option>
+        </select>
+        <div style="margin-top:8px;">
+          <input id="includeSpaces" type="checkbox" checked>
+          <label for="includeSpaces">Preserve non-letters</label>
+        </div>
+      </div>
+
+      <div class="buttons">
+        <button onclick="processText(true)">Encrypt</button>
+        <button onclick="processText(false)">Decrypt</button>
+      </div>
+
+      <div class="form-group">
+        <label>Result</label>
+        <textarea id="result" rows="3" readonly></textarea>
+      </div>
+    </main>
+  </div>
+
+  <script>
+    document.getElementById('year').textContent = new Date().getFullYear();
+
+    function zypherionTransform(text, isEncrypt, options = { preserveCase: false, preserveNonLetters: true }) {
+      const preserve = options.preserveCase;
+      const keepNon = options.preserveNonLetters;
+      const chars = text.split('');
+      let out = '';
+      for (let i = 0; i < chars.length; i++) {
+        let ch = chars[i];
+        const isLetterUpper = (ch >= 'A' && ch <= 'Z');
+        const isLetterLower = (ch >= 'a' && ch <= 'z');
+        if (!isLetterUpper && !isLetterLower) {
+          if (keepNon) out += ch;
+          continue;
+        }
+        const baseCode = 65; // 'A'
+        const code = ch.toUpperCase().charCodeAt(0);
+        const alphaIndex = code - baseCode;
+        const shift = i + 1;
+        let newIndex;
+        if (isEncrypt) {
+          newIndex = (alphaIndex + shift) % 26;
+        } else {
+          newIndex = (alphaIndex - shift) % 26;
+          if (newIndex < 0) newIndex += 26;
+        }
+        let transformed = String.fromCharCode(baseCode + newIndex);
+        if (preserve && isLetterLower) transformed = transformed.toLowerCase();
+        out += transformed;
+      }
+      return out;
+    }
+
+    function processText(isEncrypt) {
+      const txt = document.getElementById('plaintext').value || '';
+      const preserveCase = document.getElementById('caseOpt').value === 'preserve';
+      const keepNon = document.getElementById('includeSpaces').checked;
+      const res = zypherionTransform(txt, isEncrypt, { preserveCase, preserveNonLetters: keepNon });
+      document.getElementById('result').value = res;
+    }
+  </script>
+</body>
+</html>
