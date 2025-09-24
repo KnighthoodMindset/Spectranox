@@ -1,0 +1,136 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <title>Spectranox — Tavalon Cipher</title>
+  <meta name="description" content="Spectranox — Tavalon cipher (ASCII + indexing + symbols)" />
+  <link rel="stylesheet" href="techniques.css">
+</head>
+<body>
+  <div class="app">
+    <!-- LEFT: Spectranox branding + nav -->
+    <aside class="brand">
+      <div class="logo-wrap">
+        <div class="logo"><div class="sn">SN</div></div>
+      </div>
+      <div class="title">Spectranox</div>
+      <div class="subtitle">Where every secret has a spectrum</div>
+
+      <nav>
+        <div class="nav-item"><span class="chip">Techniques</span></div>
+        <div id="nav-zy" class="nav-item">⚡ Zypherion</div>
+        <div id="nav-ve" class="nav-item">✨ Veltrix</div>
+        <div id="nav-or" class="nav-item">🔮 Orvion</div>
+        <div id="nav-kl" class="nav-item">🔁 Klyptar</div>
+        <div id="nav-xe" class="nav-item">🔐 Xernova</div>
+        <div id="nav-ta" class="nav-item active">🔷 Tavalon</div>
+        <div id="nav-cr" class="nav-item">🔥 Cryvex</div>
+      </nav>
+
+      <div style="position:absolute;left:22px;bottom:22px;font-size:12px;color:rgba(230,240,255,0.6)">
+        Spectranox © <span id="year"></span>
+      </div>
+      <div class="pattern"></div>
+    </aside>
+
+    <!-- RIGHT: Tavalon UI -->
+    <main class="main">
+      <section class="hero">
+        <div class="left">
+          <h1>Tavalon</h1>
+          <p class="lead">Combination of ASCII index + symbol mapping. Single-digit letters use symbol, double-digit split into letters. Output separated by "|".</p>
+          <div class="buttons">
+            <button class="btn" id="encodeBtn">Encrypt</button>
+            <button class="btn secondary" id="decodeBtn">Decrypt</button>
+          </div>
+        </div>
+      </section>
+
+      <section class="encode">
+        <div style="flex:1">
+          <label for="plaintext" style="font-size:13px;font-weight:700">Plaintext / Cipher</label>
+          <textarea id="plaintext" placeholder="Type your message...">Esita</textarea>
+        </div>
+
+        <div style="width:340px">
+          <div style="font-size:13px;font-weight:700;margin-bottom:8px">Result</div>
+          <textarea id="result" rows="4" readonly style="width:100%;"></textarea>
+        </div>
+      </section>
+
+      <footer>Built with ❤️ using HTML, CSS & JavaScript • Spectranox</footer>
+    </main>
+  </div>
+
+  <script>
+    document.getElementById('year').textContent = new Date().getFullYear();
+
+    const digitToLetter = {
+      1: "A", 2: "B", 3: "C", 4: "D", 5: "E",
+      6: "F", 7: "G", 8: "H", 9: "I", 0: "_"
+    };
+
+    const letterToDigit = Object.fromEntries(Object.entries(digitToLetter).map(([k,v]) => [v,k]));
+
+    const alphabetSymbol = {
+      A: "!", B: "@", C: "#", D: "$", E: "%", F: "^", G: "&", H: "*", I: "(",
+      J: ")", K: "~", L: "`", M: "\\", N: "+", O: "[", P: "]", Q: "{", R: "}",
+      S: ":", T: ";", U: "\"", V: "'", W: "<", X: ">", Y: "?", Z: "/"
+    };
+
+    const symbolToAlphabet = Object.fromEntries(Object.entries(alphabetSymbol).map(([k,v]) => [v,k]));
+
+    function encryptTavalon(text) {
+      text = text.toUpperCase();
+      let result = [];
+
+      for (let ch of text) {
+        if (ch >= "A" && ch <= "Z") {
+          let pos = ch.charCodeAt(0) - 64;
+          if (pos < 10) {
+            result.push(alphabetSymbol[ch]);
+          } else {
+            let digits = pos.toString().split("");
+            let part = digitToLetter[digits[0]] + digitToLetter[digits[1]];
+            result.push(part);
+          }
+        } else {
+          result.push(ch);
+        }
+      }
+
+      return result.join("|");
+    }
+
+    function decryptTavalon(text) {
+      const parts = text.split("|");
+      let result = "";
+
+      for (let part of parts) {
+        if (part.length === 1 && symbolToAlphabet[part]) {
+          result += symbolToAlphabet[part];
+        } else if (part.length === 2 && letterToDigit[part[0]] && letterToDigit[part[1]]) {
+          let num = letterToDigit[part[0]] + letterToDigit[part[1]];
+          let charCode = parseInt(num) + 64;
+          result += String.fromCharCode(charCode);
+        } else {
+          result += part; // keep as is if unknown
+        }
+      }
+
+      return result;
+    }
+
+    document.getElementById('encodeBtn').addEventListener('click', ()=>{
+      const txt = document.getElementById('plaintext').value;
+      document.getElementById('result').value = encryptTavalon(txt);
+    });
+
+    document.getElementById('decodeBtn').addEventListener('click', ()=>{
+      const txt = document.getElementById('plaintext').value;
+      document.getElementById('result').value = decryptTavalon(txt);
+    });
+  </script>
+</body>
+</html>
