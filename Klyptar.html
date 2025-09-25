@@ -1,0 +1,129 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Spectranox — Klyptar Cipher</title>
+  <link rel="stylesheet" href="techniques.css">
+</head>
+<body>
+  <div class="app">
+    <!-- Sidebar -->
+    <aside class="brand">
+      <div class="logo-wrap">
+        <div class="logo">
+          <span class="sn">SN</span>
+        </div>
+      </div>
+      <h2 class="title">Spectranox</h2>
+      <p class="subtitle">Where every secret has a spectrum</p>
+      <nav>
+        <a href="Zypherion.html" class="nav-item">⚡ Zypherion</a>
+        <a href="Veltrix.html" class="nav-item">✨ Veltrix</a>
+        <a href="Orvion.html" class="nav-item">🔮 Orvion</a>
+        <a href="Klyptar.html" class="nav-item active">🔁 Klyptar</a>
+        <a href="Xernova.html" class="nav-item">🔐 Xernova</a>
+        <a href="Tavalon.html" class="nav-item">🔷 Tavalon</a>
+        <a href="Cryvex.html" class="nav-item">🔥 Cryvex</a>
+      </nav>
+      <div class="copyright">
+        Spectranox © <span id="year"></span>
+      </div>
+    </aside>
+
+    <!-- Main Content -->
+    <main class="main">
+      <div class="hero">
+        <div class="left">
+          <h1>Klyptar Cipher</h1>
+          <p class="lead">
+            Word-based cipher: reorder each word using an outside-in pattern (1, last, 2, last-1, ...).  
+            Words are separated with the delimiter <strong>@@</strong>. Encryption and decryption provided.
+          </p>
+        </div>
+      </div>
+
+      <div class="form-group">
+        <label for="plaintext">Plaintext</label>
+        <textarea id="plaintext" rows="3"></textarea>
+      </div>
+
+      <div class="buttons">
+        <button onclick="processKlyptar(true)">Encrypt</button>
+        <button onclick="processKlyptar(false)">Decrypt</button>
+      </div>
+
+      <div class="form-group">
+        <label>Result</label>
+        <textarea id="result" rows="3" readonly></textarea>
+      </div>
+    </main>
+  </div>
+
+  <script>
+    document.getElementById('year').textContent = new Date().getFullYear();
+
+    const DELIM = '@@';
+
+    function outsideInOrder(n) {
+      const order = [];
+      let left = 1;
+      let right = n;
+      while (left <= right) {
+        order.push(left);
+        if (left === right) break;
+        order.push(right);
+        left++;
+        right--;
+      }
+      return order;
+    }
+
+    function encryptWord(word) {
+      const n = word.length;
+      if (n === 0) return '';
+      const order = outsideInOrder(n);
+      let out = '';
+      for (let i = 0; i < order.length; i++) {
+        out += word.charAt(order[i] - 1);
+      }
+      return out;
+    }
+
+    function decryptWord(encodedWord) {
+      const n = encodedWord.length;
+      if (n === 0) return '';
+      const order = outsideInOrder(n);
+      const orig = new Array(n);
+      for (let i = 0; i < order.length; i++) {
+        const originalIndex = order[i] - 1;
+        orig[originalIndex] = encodedWord.charAt(i);
+      }
+      return orig.join('');
+    }
+
+    function klyptarEncrypt(phrase) {
+      const words = phrase.trim().split(/\s+/);
+      const encoded = words.map(w => encryptWord(w));
+      return encoded.join(DELIM);
+    }
+
+    function klyptarDecrypt(cipher) {
+      const encodedWords = cipher.split(DELIM);
+      const decoded = encodedWords.map(w => decryptWord(w));
+      return decoded.join(' ');
+    }
+
+    function processKlyptar(isEncrypt) {
+      const txt = document.getElementById('plaintext').value || '';
+      let res;
+      if (isEncrypt) {
+        res = klyptarEncrypt(txt);
+      } else {
+        res = klyptarDecrypt(txt);
+      }
+      document.getElementById('result').value = res;
+    }
+  </script>
+</body>
+</html>
