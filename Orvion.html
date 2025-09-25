@@ -1,0 +1,128 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <title>Spectranox — Orvion Cipher</title>
+  <link rel="stylesheet" href="techniques.css">
+</head>
+<body>
+  <div class="app">
+    <aside class="brand">
+      <div class="logo-wrap">
+        <div class="logo"><span class="sn">SN</span></div>
+      </div>
+      <h2 class="title">Spectranox</h2>
+      <p class="subtitle">Where every secret has a spectrum</p>
+      <nav>
+        <a href="Zypherion.html" class="nav-item">⚡ Zypherion</a>
+        <a href="Veltrix.html" class="nav-item">✨ Veltrix</a>
+        <a href="Orvion.html" class="nav-item active">🔮 Orvion</a>
+        <a href="Klyptar.html" class="nav-item">🔁 Klyptar</a>
+        <a href="Xernova.html" class="nav-item">🔐 Xernova</a>
+        <a href="Tavalon.html" class="nav-item">🔷 Tavalon</a>
+        <a href="Cryvex.html" class="nav-item">🔥 Cryvex</a>
+      </nav>
+      <div class="copyright">
+        Spectranox © <span id="year"></span>
+      </div>
+    </aside>
+
+    <main class="main">
+      <div class="hero">
+        <div class="left">
+          <h1>Orvion Cipher</h1>
+          <p class="lead">
+            Advanced technique — Klyptar reordering followed by symbol mapping, with @@ between words.
+          </p>
+        </div>
+      </div>
+
+      <div class="form-group">
+        <label for="plaintext">Plaintext</label>
+        <textarea id="plaintext" rows="3"></textarea>
+      </div>
+
+      <div class="buttons">
+        <button onclick="processText(true)">Encrypt</button>
+        <button onclick="processText(false)">Decrypt</button>
+      </div>
+
+      <div class="form-group">
+        <label>Result</label>
+        <textarea id="result" rows="3" readonly></textarea>
+      </div>
+    </main>
+  </div>
+
+  <script>
+    document.getElementById('year').textContent = new Date().getFullYear();
+
+    const symbolMap = {
+      A: "!", B: "@", C: "#", D: "$", E: "%",
+      F: "^", G: "&", H: "*", I: "(", J: ")",
+      K: "~", L: "`", M: "\\", N: "+", O: "[",
+      P: "]", Q: "{", R: "}", S: ":", T: ";",
+      U: '"', V: "'", W: "<", X: ">", Y: "?",
+      Z: "/"
+    };
+
+    const reverseSymbolMap = Object.fromEntries(
+      Object.entries(symbolMap).map(([k,v]) => [v,k])
+    );
+
+    function klyptarTransform(word) {
+      const chars = word.split('');
+      const n = chars.length;
+      let result = [];
+      let left = 0, right = n - 1;
+      while (left <= right) {
+        result.push(chars[left]);
+        if (left !== right) result.push(chars[right]);
+        left++;
+        right--;
+      }
+      return result.join('');
+    }
+
+    function klyptarReverseTransform(word) {
+      const n = word.length;
+      let result = Array(n);
+      let left = 0, right = n - 1, idx = 0;
+
+      while (left <= right) {
+        result[left] = word[idx++];
+        if (left !== right) result[right] = word[idx++];
+        left++;
+        right--;
+      }
+
+      return result.join('');
+    }
+
+    function orvionEncrypt(text) {
+      const words = text.split(/\s+/);
+      const encryptedWords = words.map(word => {
+        const reordered = klyptarTransform(word.toUpperCase());
+        return reordered.split('').map(c => symbolMap[c] || c).join('');
+      });
+      return encryptedWords.join('@@');
+    }
+
+    function orvionDecrypt(text) {
+      const words = text.split('@@');
+      const decryptedWords = words.map(word => {
+        const letters = word.split('').map(s => reverseSymbolMap[s] || s).join('');
+        return klyptarReverseTransform(letters.toLowerCase());
+      });
+      return decryptedWords.join(' ');
+    }
+
+    function processText(isEncrypt) {
+      const txt = document.getElementById('plaintext').value || '';
+      const res = isEncrypt ? orvionEncrypt(txt) : orvionDecrypt(txt);
+      document.getElementById('result').value = res;
+    }
+  </script>
+</body>
+</html>
